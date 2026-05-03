@@ -1,0 +1,13 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment file (IMPORTANT: secrets)
+.env
+
+# Uploaded images (don’t push user uploads)
+app/static/uploads/*
+
+# OS files
+.DS_Store
+Thumbs.db

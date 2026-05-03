@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Gallery — Finders Keepers{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div class="container">
+        <h1>Lost &amp; Found Gallery</h1>
+        <p>Browse all reported items. Use the filters to narrow your search.</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- SEARCH & FILTER BAR -->
+    <form class="filter-bar" method="GET" action="{{ url_for('gallery') }}">
+        <div class="search-wrap">
+            <i class="fa fa-search"></i>
+            <input type="text" name="search" placeholder="Search by name, description, or location..." value="{{ search }}">
+        </div>
+        <select name="category">
+            <option value="">All Categories</option>
+            {% for cat in ['Gadgets', 'Keys/Wallet', 'Documents', 'Clothing', 'Accessories', 'Other'] %}
+            <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+        <select name="item_type">
+            <option value="">Lost &amp; Found</option>
+            <option value="found" {% if item_type == 'found' %}selected{% endif %}>Found Items</option>
+            <option value="lost" {% if item_type == 'lost' %}selected{% endif %}>Lost Items</option>
+        </select>
+        <select name="claimed">
+            <option value="">All Status</option>
+            <option value="no" {% if claimed == 'no' %}selected{% endif %}>Unclaimed</option>
+            <option value="yes" {% if claimed == 'yes' %}selected{% endif %}>Claimed</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+        <a href="{{ url_for('gallery') }}" class="btn btn-outline">Reset</a>
+    </form>
+
+    <!-- RESULTS COUNT -->
+    <p class="results-count">
+        Showing <strong>{{ items | length }}</strong> item{% if items | length != 1 %}s{% endif %}
+        {% if search %} for "<em>{{ search }}</em>"{% endif %}
+    </p>
+
+    <!-- ITEM GRID -->
+    {% if items %}
+    <div class="card-grid">
+        {% for item in items %}
+        <div class="item-card {% if item.claimed %}is-claimed{% endif %}">
+            <div class="card-image">
+                {% if item.image %}
+                <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="{{ item.title }}">
+                {% else %}
+                <div class="card-no-image"><i class="fa fa-image"></i></div>
+                {% endif %}
+                <span class="card-type-badge badge-{{ item.item_type }}">{{ item.item_type | capitalize }}</span>
+            </div>
+            <div class="card-body">
+                <span class="card-category">{{ item.category }}</span>
+                <h3>{{ item.title }}</h3>
+                <p class="card-location"><i class="fa fa-map-marker-alt"></i> {{ item.location }}</p>
+                {% if item.description %}
+                <p class="card-desc">{{ item.description[:100] }}{% if item.description | length > 100 %}...{% endif %}</p>
+                {% endif %}
+                <div class="card-footer">
+                    <span class="card-date"><i class="fa fa-calendar"></i> {{ item.date_found or item.created_at.strftime('%b %d, %Y') }}</span>
+                    {% if item.claimed %}
+                    <span class="claimed-tag">✓ Claimed</span>
+                    {% else %}
+                    <span class="unclaimed-tag">Unclaimed</span>
+                    {% endif %}
+                </div>
+                <p class="card-reporter">Reported by: <strong>{{ item.submitted_by_name }}</strong></p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fa fa-box-open"></i>
+        <h3>No items found</h3>
+        <p>Try adjusting your filters or <a href="{{ url_for('gallery') }}">clear all filters</a>.</p>
+        {% if session.get('user_id') %}
+        <a href="{{ url_for('report') }}" class="btn btn-primary" style="margin-top: 20px;">Report an Item</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

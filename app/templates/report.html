@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Report Item — Finders Keepers{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div class="container">
+        <h1>Report an Item</h1>
+        <p>Found something? Let the community know. Your submission will be reviewed before going public.</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="form-card">
+        <form method="POST" action="{{ url_for('report') }}" enctype="multipart/form-data">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Item Name / Title <span class="required">*</span></label>
+                    <input type="text" name="title" placeholder="e.g. Black Wallet, iPhone 14, Blue ID Card" required>
+                </div>
+                <div class="form-group">
+                    <label>Report Type <span class="required">*</span></label>
+                    <select name="item_type" required>
+                        <option value="found">I Found an Item</option>
+                        <option value="lost">I Lost an Item</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="category">
+                        <option>Gadgets</option>
+                        <option>Keys/Wallet</option>
+                        <option>Documents</option>
+                        <option>Clothing</option>
+                        <option>Accessories</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date Found/Lost</label>
+                    <input type="date" name="date_found">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Location <span class="required">*</span></label>
+                <input type="text" name="location" placeholder="e.g. Library 2nd Floor, CCS Building CR, Near Acad V" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" rows="4" placeholder="Describe the item — color, brand, unique marks, condition..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Upload Photo <span class="hint">(optional but helpful)</span></label>
+                <div class="file-upload-area" id="fileUploadArea">
+                    <i class="fa fa-cloud-upload-alt"></i>
+                    <p>Click to upload or drag &amp; drop</p>
+                    <p class="hint">PNG, JPG, WEBP up to 5MB</p>
+                    <input type="file" name="image" id="imageInput" accept="image/*">
+                </div>
+                <div id="imagePreview" class="image-preview" style="display:none;">
+                    <img id="previewImg" src="" alt="Preview">
+                    <button type="button" onclick="clearImage()" class="clear-preview">× Remove</button>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-paper-plane"></i> Submit Report
+                </button>
+                <a href="{{ url_for('gallery') }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const input = document.getElementById('imageInput');
+const preview = document.getElementById('imagePreview');
+const previewImg = document.getElementById('previewImg');
+const area = document.getElementById('fileUploadArea');
+
+input.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            previewImg.src = e.target.result;
+            preview.style.display = 'flex';
+            area.style.display = 'none';
+        };
+        reader.readAsDataURL(this.files[0]);
+    }
+});
+
+function clearImage() {
+    input.value = '';
+    preview.style.display = 'none';
+    area.style.display = 'block';
+}
+</script>
+
+{% endblock %}

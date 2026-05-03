@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Home — Finders Keepers{% endblock %}
+{% block content %}
+
+<section class="hero">
+    <div class="hero-bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    <div class="hero-content">
+        <div class="hero-badge">🎓 Campus Lost &amp; Found System</div>
+        <h1 class="hero-title">
+            Lost Something?<br>
+            <em>We'll Help You Find It.</em>
+        </h1>
+        <p class="hero-sub">Submit found items, browse the gallery, and help reunite belongings with their owners. Simple. Fast. Community-powered.</p>
+        <div class="hero-cta">
+            <a href="{{ url_for('gallery') }}" class="btn btn-primary">
+                <i class="fa fa-search"></i> Browse Gallery
+            </a>
+            {% if session.get('user_id') %}
+            <a href="{{ url_for('report') }}" class="btn btn-outline">
+                <i class="fa fa-plus"></i> Report Item
+            </a>
+            {% else %}
+            <a href="{{ url_for('register') }}" class="btn btn-outline">
+                <i class="fa fa-user-plus"></i> Get Started
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="stats-card">
+            <div class="stat-item">
+                <span class="stat-number">{{ stats.total }}</span>
+                <span class="stat-label">Items Logged</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number">{{ stats.found }}</span>
+                <span class="stat-label">Found Items</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number">{{ stats.claimed }}</span>
+                <span class="stat-label">Reunited</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if recent %}
+<section class="recent-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Recently Found</h2>
+            <a href="{{ url_for('gallery') }}" class="view-all">View all <i class="fa fa-arrow-right"></i></a>
+        </div>
+        <div class="card-grid">
+            {% for item in recent %}
+            <div class="item-card {% if item.claimed %}is-claimed{% endif %}">
+                <div class="card-image">
+                    {% if item.image %}
+                    <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="{{ item.title }}">
+                    {% else %}
+                    <div class="card-no-image"><i class="fa fa-image"></i></div>
+                    {% endif %}
+                    <span class="card-type-badge badge-{{ item.item_type }}">{{ item.item_type | capitalize }}</span>
+                </div>
+                <div class="card-body">
+                    <span class="card-category">{{ item.category }}</span>
+                    <h3>{{ item.title }}</h3>
+                    <p class="card-location"><i class="fa fa-map-marker-alt"></i> {{ item.location }}</p>
+                    {% if item.claimed %}
+                    <span class="claimed-tag">✓ Claimed</span>
+                    {% else %}
+                    <span class="unclaimed-tag">Unclaimed</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="how-it-works">
+    <div class="container">
+        <h2 class="text-center">How It Works</h2>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-icon">📸</div>
+                <h3>Report an Item</h3>
+                <p>Found something? Log in and submit it with a photo and location details.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">🔍</div>
+                <h3>Browse the Gallery</h3>
+                <p>Search and filter through all found items. Use the search bar to find yours fast.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-icon">🎉</div>
+                <h3>Get Reunited</h3>
+                <p>Contact the finder or admin. Once claimed, the item is marked as reunited.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

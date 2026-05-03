@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Manage Users — Admin{% endblock %}
+{% block content %}
+
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="sidebar-header"><span>⌖</span><strong>Admin Panel</strong></div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="sidebar-link"><i class="fa fa-th-list"></i> All Items</a>
+            <a href="{{ url_for('admin_create_item') }}" class="sidebar-link"><i class="fa fa-plus-circle"></i> Create Item</a>
+            <a href="{{ url_for('admin_users') }}" class="sidebar-link active"><i class="fa fa-users"></i> Manage Users</a>
+            <a href="{{ url_for('gallery') }}" class="sidebar-link"><i class="fa fa-eye"></i> View Gallery</a>
+            <a href="{{ url_for('logout') }}" class="sidebar-link sidebar-logout"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </aside>
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h1>Registered Users</h1>
+            <span class="admin-user">{{ users | length }} total</span>
+        </div>
+        <div class="admin-table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td><strong>{{ user.username }}</strong></td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% if user.is_admin %}
+                            <span class="status-pill status-approved">Admin</span>
+                            {% else %}
+                            <span class="status-pill status-pending">User</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.created_at.strftime('%b %d, %Y') if user.created_at else '—' }}</td>
+                        <td>
+                            {% if not user.is_admin %}
+                            <a href="{{ url_for('admin_delete_user', user_id=user._id) }}"
+                               class="btn-sm btn-danger"
+                               onclick="return confirm('Delete user {{ user.username }}? Their items remain.')">
+                               <i class="fa fa-trash"></i> Delete
+                            </a>
+                            {% else %}
+                            <span style="color:#999; font-size:0.85rem;">Protected</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

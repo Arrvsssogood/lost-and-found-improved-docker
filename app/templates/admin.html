@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel — Finders Keepers{% endblock %}
+{% block content %}
+
+<div class="admin-layout">
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <span>⌖</span>
+            <strong>Admin Panel</strong>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="sidebar-link active">
+                <i class="fa fa-th-list"></i> All Items
+            </a>
+            <a href="{{ url_for('admin_create_item') }}" class="sidebar-link">
+                <i class="fa fa-plus-circle"></i> Create Item
+            </a>
+            <a href="{{ url_for('admin_users') }}" class="sidebar-link">
+                <i class="fa fa-users"></i> Manage Users
+            </a>
+            <a href="{{ url_for('gallery') }}" class="sidebar-link">
+                <i class="fa fa-eye"></i> View Gallery
+            </a>
+            <a href="{{ url_for('logout') }}" class="sidebar-link sidebar-logout">
+                <i class="fa fa-sign-out-alt"></i> Logout
+            </a>
+        </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h1>Item Management</h1>
+            <span class="admin-user"><i class="fa fa-shield-alt"></i> {{ session.username }}</span>
+        </div>
+
+        <!-- STATS PILLS -->
+        <div class="admin-stats">
+            <a href="{{ url_for('admin_dashboard', status='all') }}" class="stat-pill {% if status_filter == 'all' %}active{% endif %}">
+                All <span>{{ counts.all }}</span>
+            </a>
+            <a href="{{ url_for('admin_dashboard', status='pending') }}" class="stat-pill stat-pending {% if status_filter == 'pending' %}active{% endif %}">
+                Pending <span>{{ counts.pending }}</span>
+            </a>
+            <a href="{{ url_for('admin_dashboard', status='approved') }}" class="stat-pill stat-approved {% if status_filter == 'approved' %}active{% endif %}">
+                Approved <span>{{ counts.approved }}</span>
+            </a>
+            <a href="{{ url_for('admin_dashboard', status='rejected') }}" class="stat-pill stat-rejected {% if status_filter == 'rejected' %}active{% endif %}">
+                Rejected <span>{{ counts.rejected }}</span>
+            </a>
+        </div>
+
+        <!-- SEARCH -->
+        <form class="admin-search-bar" method="GET">
+            <input type="hidden" name="status" value="{{ status_filter }}">
+            <i class="fa fa-search"></i>
+            <input type="text" name="search" placeholder="Search by title, location, or user..." value="{{ search }}">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+
+        <!-- TABLE -->
+        <div class="admin-table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Type</th>
+                        <th>Location</th>
+                        <th>Submitted By</th>
+                        <th>Status</th>
+                        <th>Claimed</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>
+                            <div class="table-item-name">
+                                {% if item.image %}
+                                <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="">
+                                {% else %}
+                                <div class="table-no-img"><i class="fa fa-image"></i></div>
+                                {% endif %}
+                                <div>
+                                    <strong>{{ item.title }}</strong>
+                                    <small>{{ item.category }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge-{{ item.item_type }} pill">{{ item.item_type | capitalize }}</span></td>
+                        <td>{{ item.location }}</td>
+                        <td>{{ item.submitted_by_name }}</td>
+                        <td>
+                            {% if item.status == 'approved' %}
+                            <span class="status-pill status-approved">Approved</span>
+                            {% elif item.status == 'pending' %}
+                            <span class="status-pill status-pending">Pending</span>
+                            {% else %}
+                            <span class="status-pill status-rejected">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('toggle_claimed', item_id=item._id) }}" class="toggle-btn {% if item.claimed %}is-claimed{% endif %}">
+                                {% if item.claimed %}✓ Claimed{% else %}Unclaimed{% endif %}
+                            </a>
+                        </td>
+                        <td>{{ item.created_at.strftime('%b %d, %Y') }}</td>
+                        <td class="action-btns">
+                            {% if item.status == 'pending' %}
+                            <a href="{{ url_for('approve_item', item_id=item._id) }}" class="btn-sm btn-approve" title="Approve">✓</a>
+                            <a href="{{ url_for('reject_item', item_id=item._id) }}" class="btn-sm btn-reject" title="Reject">✗</a>
+                            {% elif item.status == 'rejected' %}
+                            <a href="{{ url_for('approve_item', item_id=item._id) }}" class="btn-sm btn-approve" title="Approve">✓</a>
+                            {% elif item.status == 'approved' %}
+                            <a href="{{ url_for('reject_item', item_id=item._id) }}" class="btn-sm btn-reject" title="Reject">✗</a>
+                            {% endif %}
+                            <a href="{{ url_for('admin_edit_item', item_id=item._id) }}" class="btn-sm btn-edit" title="Edit"><i class="fa fa-edit"></i></a>
+                            <a href="{{ url_for('admin_delete_item', item_id=item._id) }}" class="btn-sm btn-danger" title="Delete"
+                               onclick="return confirm('Permanently delete this item?')"><i class="fa fa-trash"></i></a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="empty-row">No items found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

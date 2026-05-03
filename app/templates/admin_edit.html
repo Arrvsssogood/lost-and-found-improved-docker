@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Edit Item — Admin{% endblock %}
+{% block content %}
+
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="sidebar-header"><span>⌖</span><strong>Admin Panel</strong></div>
+        <nav class="sidebar-nav">
+            <a href="{{ url_for('admin_dashboard') }}" class="sidebar-link active"><i class="fa fa-th-list"></i> All Items</a>
+            <a href="{{ url_for('admin_create_item') }}" class="sidebar-link"><i class="fa fa-plus-circle"></i> Create Item</a>
+            <a href="{{ url_for('admin_users') }}" class="sidebar-link"><i class="fa fa-users"></i> Manage Users</a>
+            <a href="{{ url_for('gallery') }}" class="sidebar-link"><i class="fa fa-eye"></i> View Gallery</a>
+            <a href="{{ url_for('logout') }}" class="sidebar-link sidebar-logout"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </aside>
+    <div class="admin-main">
+        <div class="admin-topbar">
+            <h1>Edit Item</h1>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline"><i class="fa fa-arrow-left"></i> Back</a>
+        </div>
+        <div class="form-card" style="max-width: 700px;">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" name="title" value="{{ item.title }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select name="item_type">
+                            <option value="found" {% if item.item_type == 'found' %}selected{% endif %}>Found</option>
+                            <option value="lost" {% if item.item_type == 'lost' %}selected{% endif %}>Lost</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="category">
+                            {% for cat in ['Gadgets', 'Keys/Wallet', 'Documents', 'Clothing', 'Accessories', 'Other'] %}
+                            <option {% if item.category == cat %}selected{% endif %}>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select name="status">
+                            <option value="pending" {% if item.status == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="approved" {% if item.status == 'approved' %}selected{% endif %}>Approved</option>
+                            <option value="rejected" {% if item.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" name="location" value="{{ item.location }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Date Found</label>
+                    <input type="date" name="date_found" value="{{ item.date_found }}">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea name="description" rows="4">{{ item.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Replace Image (optional)</label>
+                    {% if item.image %}
+                    <div style="margin-bottom: 10px;">
+                        <img src="{{ url_for('static', filename='uploads/' + item.image) }}" style="height:100px; border-radius:8px;">
+                    </div>
+                    {% endif %}
+                    <input type="file" name="image" accept="image/*">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save Changes</button>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

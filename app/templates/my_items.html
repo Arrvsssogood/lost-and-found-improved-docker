@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}My Items — Finders Keepers{% endblock %}
+{% block content %}
+
+<div class="page-header">
+    <div class="container">
+        <h1>My Submissions</h1>
+        <p>Items you've reported. Pending items await admin review before going public.</p>
+    </div>
+</div>
+
+<div class="container">
+    <div style="margin-bottom: 20px;">
+        <a href="{{ url_for('report') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Report Another Item</a>
+    </div>
+    {% if items %}
+    <div class="admin-table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Claimed</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>
+                        <div class="table-item-name">
+                            {% if item.image %}
+                            <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="">
+                            {% endif %}
+                            <strong>{{ item.title }}</strong>
+                        </div>
+                    </td>
+                    <td><span class="badge-{{ item.item_type }} pill">{{ item.item_type | capitalize }}</span></td>
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.location }}</td>
+                    <td>
+                        {% if item.status == 'approved' %}
+                        <span class="status-pill status-approved">Approved</span>
+                        {% elif item.status == 'pending' %}
+                        <span class="status-pill status-pending">Pending</span>
+                        {% else %}
+                        <span class="status-pill status-rejected">Rejected</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.claimed %}
+                        <span class="claimed-tag">✓ Claimed</span>
+                        {% else %}
+                        <span class="unclaimed-tag">Unclaimed</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ item.created_at.strftime('%b %d, %Y') }}</td>
+                    <td>
+                        <a href="{{ url_for('delete_my_item', item_id=item._id) }}"
+                           class="btn-sm btn-danger"
+                           onclick="return confirm('Delete this item?')">
+                            <i class="fa fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fa fa-inbox"></i>
+        <h3>No submissions yet</h3>
+        <p>You haven't reported any items. Found something on campus?</p>
+        <a href="{{ url_for('report') }}" class="btn btn-primary" style="margin-top: 20px;">Report an Item</a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

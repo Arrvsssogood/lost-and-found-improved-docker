@@ -1,0 +1,17 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment file (never bake secrets into image)
+.env
+
+# Git files
+.git
+.gitignore
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Uploaded files (keeps image clean)
+app/static/uploads
