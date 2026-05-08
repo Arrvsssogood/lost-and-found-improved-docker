@@ -156,11 +156,13 @@ main { flex: 1; }
 .hero {
     min-height: 88vh;
     background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #142d45 100%);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    text-align: center;
     padding: 80px 8%;
-    gap: 60px;
+    gap: 40px;
     position: relative;
     overflow: hidden;
 }
@@ -187,6 +189,12 @@ main { flex: 1; }
     letter-spacing: 0.5px;
 }
 
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .hero-title {
     font-family: 'Playfair Display', serif;
     font-size: 3.5rem;
@@ -205,7 +213,9 @@ main { flex: 1; }
     margin-bottom: 36px;
 }
 
-.hero-cta { display: flex; gap: 16px; flex-wrap: wrap; }
+.hero-cta {
+    justify-content: center;
+}
 
 /* STATS CARD */
 .stats-card {
@@ -711,7 +721,10 @@ main { flex: 1; }
 
 @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; padding: 60px 6%; }
-    .hero-visual { display: none; }
+    .hero-visual {
+    display: flex;
+    justify-content: center;
+    }
     .hero-title { font-size: 2.6rem; }
     .card-grid { grid-template-columns: repeat(2, 1fr); }
     .steps-grid { grid-template-columns: 1fr 1fr; }
@@ -730,7 +743,7 @@ main { flex: 1; }
     .admin-sidebar { width: 100%; height: auto; position: relative; top: 0; }
     .filter-bar { flex-direction: column; }
     .search-wrap { min-width: unset; }
-    .stats-card { flex-direction: column; gap: 20px; }
+    .stats-card {flex-direction: row;justify-content: center;}
     .stat-divider { width: 60px; height: 1px; }
     .hero-title { font-size: 2rem; }
 }
