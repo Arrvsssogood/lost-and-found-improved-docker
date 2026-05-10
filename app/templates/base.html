@@ -12,8 +12,9 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <a href="{{ url_for('index') }}" class="nav-brand">
-            <span class="brand-icon">⌖</span>
-            <span><strong>FindBack</strong></span>
+            <strong>
+                <span class="brand-find">Find</span><span class="brand-back">Back</span>
+            </strong>
         </a>
         <ul class="nav-links">
             <li><a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}class="active"{% endif %}>Home</a></li>

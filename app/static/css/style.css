@@ -44,22 +44,15 @@ body {
     box-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
 
-.nav-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--white);
-    text-decoration: none;
-    font-size: 1.2rem;
-    letter-spacing: -0.3px;
+
+.brand-find {
+    color: #ffffff; /* white */
 }
 
-.brand-icon {
-    font-size: 1.6rem;
-    color: var(--teal);
+.brand-back {
+    color: var(--teal); /* your blue */
 }
 
-.nav-brand strong { color: var(--teal); }
 
 .nav-links {
     display: flex;
