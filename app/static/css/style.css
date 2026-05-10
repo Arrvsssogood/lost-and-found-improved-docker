@@ -252,9 +252,14 @@ main { flex: 1; }
 
 .btn-primary {
     background: var(--teal);
-    color: var(--navy);
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(59,130,246,0.4);
 }
-.btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
+
+.btn-primary:hover {
+    background: var(--teal-dark);
+    box-shadow: 0 6px 18px rgba(59,130,246,0.5);
+}
 
 .btn-outline {
     background: transparent;
