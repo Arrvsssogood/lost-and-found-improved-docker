@@ -46,16 +46,23 @@ def admin_required(f):
     return decorated
 
 def seed_admin():
-    """Create default admin account if it doesn't exist."""
-    if not mongo.db.users.find_one({'username': 'admin'}):
+    admin_username = os.environ.get('ADMIN_USERNAME')
+    admin_email = os.environ.get('ADMIN_EMAIL')
+    admin_password = os.environ.get('ADMIN_PASSWORD')
+
+    if not admin_username or not admin_password:
+        raise ValueError("Missing admin environment variables.")
+
+    if not mongo.db.users.find_one({'username': admin_username}):
         mongo.db.users.insert_one({
-            'username': 'admin',
-            'email': 'admin@finderskeepers.com',
-            'password': generate_password_hash('admin123'),
+            'username': admin_username,
+            'email': admin_email,
+            'password': generate_password_hash(admin_password),
             'is_admin': True,
             'created_at': datetime.utcnow()
         })
-        print("✅ Default admin created: admin / admin123")
+
+        print("✅ Admin account created securely.")
 
 # ─────────────────────────────────────────────
 # AUTH ROUTES
