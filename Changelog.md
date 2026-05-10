@@ -27,11 +27,17 @@ All notable changes to this project will be documented in this file.
 - Fixed incorrect date handling for item records
 - Fixed layout inconsistencies in recent section stats (claimed/unclaimed display)
 - Fixed session persistence issues by ensuring proper session clearing (`session.clear()`)
+- **Fixed `TemplateNotFound` error by setting explicit `template_folder` and `static_folder` paths in Flask app initialization** ← *added*
 
 ### Removed
 - Removed watermark artifacts from recent section styling (cleanup pass)
 
 ---
+
+## [2026-05-08] - Template Resolution Fix ← *added*
+### Fixed
+- [Palacios] Fixed `jinja2.exceptions.TemplateNotFound: index.html` by passing `template_folder=os.path.join('app', 'templates')` and `static_folder=os.path.join('app', 'static')` to the Flask `app` constructor, so Flask resolves templates and static files correctly when `app.py` lives outside the `app/` subdirectory
+
 
 ## [2026-05-10] - UI Refinement and Admin Security Milestone
 
