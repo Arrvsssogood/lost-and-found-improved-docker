@@ -179,7 +179,7 @@ pip install -r requirements.txt
 
 Make sure MongoDB is running on:
 
-mongodb://localhost:27017
+mongodb://mongo:27017/finders_keepers
 
 ---
 
