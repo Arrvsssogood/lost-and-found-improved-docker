@@ -61,7 +61,7 @@ docker compose down -v
 The system automatically creates an admin account on first run:
 
 Username: admin  
-Password: admin123  
+Password: Admin123  
 
 ⚠️ Change this after setup if needed.
 
