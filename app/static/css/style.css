@@ -685,9 +685,31 @@ main { flex: 1; }
 .toggle-btn.is-claimed { background: #c6f6d5; color: #276749; }
 
 /* ─── SECTION: RECENT + HOW IT WORKS ─── */
-.recent-section { background: white; padding: 60px 0; }
+.recent-section { background: white; padding: 60px 0; overflow: hidden; }
 .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 .section-header h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--navy); }
+.recent-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200%;            
+    max-width: 2000px;     
+    z-index: 0;            
+    opacity: 0.1;         
+    pointer-events: none;  
+}
+
+.recent-watermark img {
+    width: 100%;
+    height: auto;
+    filter: none;          
+}
+
+.recent-section .container {
+    position: relative;
+    z-index: 1;
+}
 .view-all { color: var(--teal); text-decoration: none; font-weight: 600; font-size: 0.9rem; }
 
 .how-it-works { padding: 70px 0; }
