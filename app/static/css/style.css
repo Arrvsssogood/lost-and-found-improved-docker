@@ -42,6 +42,18 @@
     margin-top: 10px;
 }
 
+.register-header {
+    text-align: center;
+    padding-top: 20px;
+    margin-bottom: 30px;
+}
+
+.register-header h2 {
+    color: #333; 
+    font-size: 1.5rem;
+    margin-top: 15px;
+}
+
 body {
     font-family: 'DM Sans', sans-serif;
     background: var(--bg);

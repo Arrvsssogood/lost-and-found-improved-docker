@@ -5,9 +5,11 @@
 <div class="auth-page">
     <div class="auth-card">
         <div class="auth-header">
-            <span class="auth-icon">🎓</span>
+            <a href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FindBack Logo" class="login-logo">
+            </a>
             <h2>Create Account</h2>
-            <p>Join the Finders Keepers community</p>
+            <p>Join the FindBack community</p>
         </div>
         <form method="POST" action="{{ url_for('register') }}">
             <div class="form-group">
