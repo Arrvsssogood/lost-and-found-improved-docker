@@ -5,10 +5,10 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-    --teal: #00c9b1;
-    --teal-dark: #009e8c;
-    --navy: #0d1b2a;
-    --navy-mid: #1b2d42;
+    --teal: #3B82F6; ;
+    --teal-dark: #1D4ED8;
+    --navy: #0F172A;  
+    --navy-mid: #1E3A8A; 
     --bg: #f0f4f8;
     --white: #ffffff;
     --text: #2d3748;
