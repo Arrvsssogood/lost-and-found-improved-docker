@@ -3,7 +3,7 @@ from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from bson.objectid import ObjectId
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 
 app = Flask(__name__,
@@ -59,7 +59,7 @@ def seed_admin():
             'email': admin_email,
             'password': generate_password_hash(admin_password),
             'is_admin': True,
-            'created_at': datetime.utcnow()
+            'created_at': datetime.now(timezone.utc)
         })
 
         print("✅ Admin account created securely.")
@@ -88,7 +88,7 @@ def register():
             'email': email,
             'password': generate_password_hash(password),
             'is_admin': False,
-            'created_at': datetime.utcnow()
+            'created_at': datetime.now(timezone.utc)
         })
         flash('Account created! Please log in.', 'success')
         return redirect(url_for('login'))
@@ -184,7 +184,7 @@ def report():
             if file and file.filename and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 # Make filename unique
-                unique_filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{filename}"
+                unique_filename = f"{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{filename}"
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
                 image_filename = unique_filename
 
@@ -200,7 +200,7 @@ def report():
             'claimed': False,
             'submitted_by': session['user_id'],
             'submitted_by_name': session['username'],
-            'created_at': datetime.utcnow()
+            'created_at': datetime.now(timezone.utc)
         })
         flash('Item submitted! It will appear publicly after admin approval.', 'success')
         return redirect(url_for('my_items'))
@@ -313,7 +313,7 @@ def admin_edit_item(item_id):
             file = request.files['image']
             if file and file.filename and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                unique_filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{filename}"
+                unique_filename = f"{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{filename}"
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
                 updates['image'] = unique_filename
 
@@ -340,7 +340,7 @@ def admin_create_item():
             file = request.files['image']
             if file and file.filename and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                unique_filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{filename}"
+                unique_filename = f"{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{filename}"
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
                 image_filename = unique_filename
 
@@ -356,7 +356,7 @@ def admin_create_item():
             'claimed': False,
             'submitted_by': session['user_id'],
             'submitted_by_name': f"Admin ({session['username']})",
-            'created_at': datetime.utcnow()
+            'created_at': datetime.now(timezone.utc)
         })
         flash('Item created successfully.', 'success')
         return redirect(url_for('admin_dashboard'))
