@@ -31,21 +31,34 @@
         </div>
     </div>
     <div class="hero-visual">
-        <div class="stats-card">
-            <div class="stat-item">
-                <span class="stat-number">{{ stats.total }}</span>
-                <span class="stat-label">Items Logged</span>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-number">{{ stats.found }}</span>
-                <span class="stat-label">Found Items</span>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-number">{{ stats.claimed }}</span>
-                <span class="stat-label">Reunited</span>
-            </div>
+    <div class="stats-card">
+        <div class="stat-item">
+            <span class="stat-number">{{ stats.total }}</span>
+            <span class="stat-label">Total Items</span>
+        </div>
+        <div class="stat-divider"></div>
+
+        <div class="stat-item">
+            <span class="stat-number">{{ stats.found }}</span>
+            <span class="stat-label">Found Items</span>
+        </div>
+        <div class="stat-divider"></div>
+
+        <div class="stat-item">
+            <span class="stat-number">{{ stats.lost }}</span>
+            <span class="stat-label">Lost Items</span>
+        </div>
+        <div class="stat-divider"></div>
+
+        <div class="stat-item">
+            <span class="stat-number">{{ stats.claimed }}</span>
+            <span class="stat-label">Claimed</span>
+        </div>
+        <div class="stat-divider"></div>
+
+        <div class="stat-item">
+            <span class="stat-number">{{ stats.unclaimed }}</span>
+            <span class="stat-label">Unclaimed</span>
         </div>
     </div>
 </section>

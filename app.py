@@ -107,7 +107,7 @@ def login():
 
         if user and check_password_hash(user['password'], password):
             session.clear()
-            
+
             session['user_id'] = str(user['_id'])
             session['username'] = user['username']
             session['is_admin'] = user.get('is_admin', False)
@@ -130,14 +130,44 @@ def logout():
 
 @app.route('/')
 def index():
-    stats = {
-        'total': mongo.db.items.count_documents({'status': {'$ne': 'rejected'}}),
-        'found': mongo.db.items.count_documents({'item_type': 'found', 'status': 'approved'}),
-        'claimed': mongo.db.items.count_documents({'claimed': True}),
-    }
-    recent = list(mongo.db.items.find({'status': 'approved'}).sort('created_at', -1).limit(4))
-    return render_template('index.html', stats=stats, recent=recent)
 
+    approved_query = {'status': 'approved'}
+
+    stats = {
+        'total': mongo.db.items.count_documents(approved_query),
+
+        'found': mongo.db.items.count_documents({
+            'status': 'approved',
+            'item_type': 'found'
+        }),
+
+        'lost': mongo.db.items.count_documents({
+            'status': 'approved',
+            'item_type': 'lost'
+        }),
+
+        'claimed': mongo.db.items.count_documents({
+            'status': 'approved',
+            'claimed': True
+        }),
+
+        'unclaimed': mongo.db.items.count_documents({
+            'status': 'approved',
+            'claimed': False
+        }),
+    }
+
+    recent = list(
+        mongo.db.items.find({'status': 'approved'})
+        .sort('created_at', -1)
+        .limit(4)
+    )
+
+    return render_template(
+        'index.html',
+        stats=stats,
+        recent=recent
+    )
 
 @app.route('/gallery')
 def gallery():
