@@ -21,6 +21,27 @@
     --radius: 12px;
 }
 
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-logo {
+    width: 140px;        
+    height: auto;
+    margin-bottom: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    filter: none; 
+}
+
+.login-header h2 {
+    color: #333;  
+    font-size: 1.5rem;
+    margin-top: 10px;
+}
+
 body {
     font-family: 'DM Sans', sans-serif;
     background: var(--bg);
