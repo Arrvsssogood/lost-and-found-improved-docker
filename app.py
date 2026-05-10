@@ -13,6 +13,9 @@ app.secret_key = os.environ['SECRET_KEY']
 app.config['MONGO_URI'] = os.environ['MONGO_URI']
 app.config['UPLOAD_FOLDER'] = os.path.join('app', 'static', 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB max upload
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = False  # True in production HTTPS
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
@@ -103,6 +106,8 @@ def login():
         user = mongo.db.users.find_one({'username': username})
 
         if user and check_password_hash(user['password'], password):
+            session.clear()
+            
             session['user_id'] = str(user['_id'])
             session['username'] = user['username']
             session['is_admin'] = user.get('is_admin', False)
