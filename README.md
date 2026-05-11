@@ -61,7 +61,7 @@ docker compose down -v
 The system automatically creates an admin account on first run:
 
 Username: admin  
-Password: admin123  
+Password: Admin123  
 
 ⚠️ Change this after setup if needed.
 
@@ -179,7 +179,7 @@ pip install -r requirements.txt
 
 Make sure MongoDB is running on:
 
-mongodb://localhost:27017
+mongodb://mongo:27017/finders_keepers
 
 ---
 
