@@ -5,6 +5,14 @@ from werkzeug.utils import secure_filename
 from bson.objectid import ObjectId
 from datetime import datetime, timezone
 import os
+import logging
+from opencensus.ext.azure.log_exporter import AzureLogHandler
+
+# Paste the string you copied from the Azure Portal
+conn_string = "InstrumentationKey=fd47117d-2f20-4c27-b24c-e2c0ef87481d;IngestionEndpoint=https://eastasia-0.in.applicationinsights.azure.com/;LiveEndpoint=https://eastasia.livediagnostics.monitor.azure.com/;ApplicationId=e5666d25-82f6-4c09-9240-92ec1387ad5d" 
+
+logger = logging.getLogger(__name__)
+logger.addHandler(AzureLogHandler(connection_string=conn_string))
 
 app = Flask(__name__,
             template_folder=os.path.join('app', 'templates'),
@@ -16,6 +24,12 @@ app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB max upload
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SECURE'] = False  # True in production HTTPS
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+# Use this inside your routes to log events
+@app.route('/')
+def index():
+    logger.info("Home page accessed")
+    return render_template('index.html')
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
