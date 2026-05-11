@@ -3,7 +3,7 @@ from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from bson.objectid import ObjectId
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 
 app = Flask(__name__,
@@ -13,6 +13,9 @@ app.secret_key = os.environ['SECRET_KEY']
 app.config['MONGO_URI'] = os.environ['MONGO_URI']
 app.config['UPLOAD_FOLDER'] = os.path.join('app', 'static', 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB max upload
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = False  # True in production HTTPS
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
@@ -46,16 +49,23 @@ def admin_required(f):
     return decorated
 
 def seed_admin():
-    """Create default admin account if it doesn't exist."""
-    if not mongo.db.users.find_one({'username': 'admin'}):
+    admin_username = os.environ.get('ADMIN_USERNAME')
+    admin_email = os.environ.get('ADMIN_EMAIL')
+    admin_password = os.environ.get('ADMIN_PASSWORD')
+
+    if not admin_username or not admin_password:
+        raise ValueError("Missing admin environment variables.")
+
+    if not mongo.db.users.find_one({'username': admin_username}):
         mongo.db.users.insert_one({
-            'username': 'admin',
-            'email': 'admin@finderskeepers.com',
-            'password': generate_password_hash('admin123'),
+            'username': admin_username,
+            'email': admin_email,
+            'password': generate_password_hash(admin_password),
             'is_admin': True,
-            'created_at': datetime.utcnow()
+            'created_at': datetime.now(timezone.utc)
         })
-        print("✅ Default admin created: admin / admin123")
+
+        print("✅ Admin account created securely.")
 
 # ─────────────────────────────────────────────
 # AUTH ROUTES
@@ -81,7 +91,7 @@ def register():
             'email': email,
             'password': generate_password_hash(password),
             'is_admin': False,
-            'created_at': datetime.utcnow()
+            'created_at': datetime.now(timezone.utc)
         })
         flash('Account created! Please log in.', 'success')
         return redirect(url_for('login'))
@@ -96,6 +106,8 @@ def login():
         user = mongo.db.users.find_one({'username': username})
 
         if user and check_password_hash(user['password'], password):
+            session.clear()
+            
             session['user_id'] = str(user['_id'])
             session['username'] = user['username']
             session['is_admin'] = user.get('is_admin', False)
@@ -118,14 +130,38 @@ def logout():
 
 @app.route('/')
 def index():
-    stats = {
-        'total': mongo.db.items.count_documents({'status': {'$ne': 'rejected'}}),
-        'found': mongo.db.items.count_documents({'item_type': 'found', 'status': 'approved'}),
-        'claimed': mongo.db.items.count_documents({'claimed': True}),
-    }
-    recent = list(mongo.db.items.find({'status': 'approved'}).sort('created_at', -1).limit(4))
-    return render_template('index.html', stats=stats, recent=recent)
+    total_count = mongo.db.items.count_documents({'status': {'$ne': 'rejected'}})
+    
+    found_count = mongo.db.items.count_documents({
+        'item_type': 'found', 
+        'status': 'approved',
+        'claimed': False
+    })
+    
+    lost_count = mongo.db.items.count_documents({
+        'item_type': 'lost', 
+        'status': 'approved', 
+        'claimed': False
+    })
+    
+    claimed_count = mongo.db.items.count_documents({'claimed': True})
+    
+    unclaimed_count = mongo.db.items.count_documents({
+        'status': 'approved', 
+        'claimed': False
+    })
 
+    stats = {
+        'total': total_count,
+        'found': found_count,
+        'lost': lost_count,
+        'claimed': claimed_count,
+        'unclaimed': unclaimed_count
+    }
+
+    recent = list(mongo.db.items.find({'status': 'approved'}).sort('created_at', -1).limit(4))
+    
+    return render_template('index.html', stats=stats, recent=recent)
 
 @app.route('/gallery')
 def gallery():
@@ -177,7 +213,7 @@ def report():
             if file and file.filename and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 # Make filename unique
-                unique_filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{filename}"
+                unique_filename = f"{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{filename}"
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
                 image_filename = unique_filename
 
@@ -193,7 +229,7 @@ def report():
             'claimed': False,
             'submitted_by': session['user_id'],
             'submitted_by_name': session['username'],
-            'created_at': datetime.utcnow()
+            'created_at': datetime.now(timezone.utc)
         })
         flash('Item submitted! It will appear publicly after admin approval.', 'success')
         return redirect(url_for('my_items'))
@@ -306,7 +342,7 @@ def admin_edit_item(item_id):
             file = request.files['image']
             if file and file.filename and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                unique_filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{filename}"
+                unique_filename = f"{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{filename}"
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
                 updates['image'] = unique_filename
 
@@ -333,7 +369,7 @@ def admin_create_item():
             file = request.files['image']
             if file and file.filename and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                unique_filename = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{filename}"
+                unique_filename = f"{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{filename}"
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
                 image_filename = unique_filename
 
@@ -349,7 +385,7 @@ def admin_create_item():
             'claimed': False,
             'submitted_by': session['user_id'],
             'submitted_by_name': f"Admin ({session['username']})",
-            'created_at': datetime.utcnow()
+            'created_at': datetime.now(timezone.utc)
         })
         flash('Item created successfully.', 'success')
         return redirect(url_for('admin_dashboard'))
