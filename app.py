@@ -6,15 +6,29 @@ from bson.objectid import ObjectId
 from datetime import datetime, timezone
 import os
 
+# --- AZURE MONITORING & ENV SETUP ---
+from dotenv import load_dotenv
+from azure.monitor.opentelemetry import configure_azure_monitor
+
+# Load the .env file from the project root
+load_dotenv()
+
+# Initialize Azure Application Insights if the string is found in .env
+if os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"):
+    configure_azure_monitor()
+# ------------------------------------
+
 app = Flask(__name__,
             template_folder=os.path.join('app', 'templates'),
             static_folder=os.path.join('app', 'static'))
-app.secret_key = os.environ['SECRET_KEY']
-app.config['MONGO_URI'] = os.environ['MONGO_URI']
+
+# Use os.getenv to safely pull variables from your hidden .env on the VM
+app.secret_key = os.getenv('SECRET_KEY', 'default-key-for-dev')
+app.config['MONGO_URI'] = os.getenv('MONGO_URI')
 app.config['UPLOAD_FOLDER'] = os.path.join('app', 'static', 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB max upload
 app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SECURE'] = False  # True in production HTTPS
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True if you move to HTTPS
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
@@ -54,7 +68,9 @@ def seed_admin():
     admin_password = os.environ.get('ADMIN_PASSWORD')
 
     if not admin_username or not admin_password:
-        raise ValueError("Missing admin environment variables.")
+        # Changed to print so it doesn't crash if vars are missing during setup
+        print("⚠️ Admin environment variables missing. Skipping seed.")
+        return
 
     if not mongo.db.users.find_one({'username': admin_username}):
         mongo.db.users.insert_one({
@@ -64,7 +80,6 @@ def seed_admin():
             'is_admin': True,
             'created_at': datetime.now(timezone.utc)
         })
-
         print("✅ Admin account created securely.")
 
 # ─────────────────────────────────────────────
@@ -212,7 +227,6 @@ def report():
             file = request.files['image']
             if file and file.filename and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                # Make filename unique
                 unique_filename = f"{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{filename}"
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], unique_filename))
                 image_filename = unique_filename
@@ -381,7 +395,7 @@ def admin_create_item():
             'item_type': request.form.get('item_type', 'found'),
             'date_found': request.form.get('date_found', ''),
             'image': image_filename,
-            'status': request.form.get('status', 'approved'),
+            'status': 'approved',
             'claimed': False,
             'submitted_by': session['user_id'],
             'submitted_by_name': f"Admin ({session['username']})",
@@ -420,4 +434,5 @@ if __name__ == '__main__':
     with app.app_context():
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
         seed_admin()
+    # Runs on 0.0.0.0 to be accessible via Azure Public IP
     app.run(host='0.0.0.0', port=5000, debug=False)
