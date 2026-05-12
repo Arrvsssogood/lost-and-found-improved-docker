@@ -1,29 +1,34 @@
 name: FindBack Deployment
+
 on:
   push:
-    branches: [ proj ]  # Tracks your latest updates on the proj branch
+    branches: [ proj ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Azure VM via SSH
+      - name: SSH into Azure VM and Deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VM_IP }}
           username: ${{ secrets.VM_USER }}
           password: ${{ secrets.VM_PASS }}
           script: |
-            # Ensure Docker and Docker-Compose are installed
-            sudo apt update && sudo apt install -y docker.io docker-compose
-            
-            # Navigate to or Create the FindBack directory
+            # 1. Check if the project folder exists, if not, clone it
             if [ ! -d "finders-keepers" ]; then
               git clone -b proj https://github.com/Arrvsssogood/lost-and-found-improved-docker.git finders-keepers
             fi
-            
+
+            # 2. Enter the directory and pull the latest code
             cd finders-keepers
             git pull origin proj
-            
-            # Rebuild and start the containers
-            sudo docker-compose up -d --build
+
+            # 3. FIX: Use modern 'docker compose' (V2) to avoid ContainerConfig errors
+            # We use 'down' first to ensure a clean slate, then 'up' with '--build' 
+            # to make sure the new requirements.txt and app.py are applied.
+            sudo docker compose down
+            sudo docker compose up -d --build
+
+            # 4. Cleanup: Remove unused old images to save disk space on the VM
+            sudo docker image prune -f
