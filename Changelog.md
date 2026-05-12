@@ -63,3 +63,7 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 - [Morandarte] Removed watermark styling from recent section after cleanup pass
+
+## [2026-05-12] - Resource Group and VM Creation
+- [Palacios] Created Resource Group
+- [Palacios] Created a Virtual Machine in Azure as preparation for deployment

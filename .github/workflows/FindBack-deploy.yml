@@ -1,0 +1,29 @@
+name: FindBack Deployment
+on:
+  push:
+    branches: [ proj ]  # Tracks your latest updates on the proj branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Azure VM via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_IP }}
+          username: ${{ secrets.VM_USER }}
+          password: ${{ secrets.VM_PASS }}
+          script: |
+            # Ensure Docker and Docker-Compose are installed
+            sudo apt update && sudo apt install -y docker.io docker-compose
+            
+            # Navigate to or Create the FindBack directory
+            if [ ! -d "finders-keepers" ]; then
+              git clone -b proj https://github.com/Arrvsssogood/lost-and-found-improved-docker.git finders-keepers
+            fi
+            
+            cd finders-keepers
+            git pull origin proj
+            
+            # Rebuild and start the containers
+            sudo docker-compose up -d --build
