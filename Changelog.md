@@ -12,7 +12,7 @@
 - **[Palacios]** Added `Changelog.md` and Fixed some in `index.html`.
 - **[Palacios]** Fixed the stats for the claimed and unclaimed items.
 - **[Morandarte]** Implemented Azure logging in `app.py` and added logging for home page access.
-
+- **[Palacios]** Update datetime handling and enhance admin account creation in `app.py`.
 ---
 
 ## [2026-05-12] - Application Refactoring & Cloud Setup
@@ -22,7 +22,6 @@
 
 ### Changed
 - **[Morandarte]** Refactor `app.py` to remove Azure logging and update datetime usage; modify `requirements.txt`.
-- **[Morandarte]** Update datetime handling and enhance admin account creation in `app.py`.
 
 ---
 
