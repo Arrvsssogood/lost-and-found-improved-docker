@@ -107,7 +107,7 @@ def login():
 
         if user and check_password_hash(user['password'], password):
             session.clear()
-
+            
             session['user_id'] = str(user['_id'])
             session['username'] = user['username']
             session['is_admin'] = user.get('is_admin', False)
@@ -130,44 +130,38 @@ def logout():
 
 @app.route('/')
 def index():
-
-    approved_query = {'status': 'approved'}
+    total_count = mongo.db.items.count_documents({'status': {'$ne': 'rejected'}})
+    
+    found_count = mongo.db.items.count_documents({
+        'item_type': 'found', 
+        'status': 'approved',
+        'claimed': False
+    })
+    
+    lost_count = mongo.db.items.count_documents({
+        'item_type': 'lost', 
+        'status': 'approved', 
+        'claimed': False
+    })
+    
+    claimed_count = mongo.db.items.count_documents({'claimed': True})
+    
+    unclaimed_count = mongo.db.items.count_documents({
+        'status': 'approved', 
+        'claimed': False
+    })
 
     stats = {
-        'total': mongo.db.items.count_documents(approved_query),
-
-        'found': mongo.db.items.count_documents({
-            'status': 'approved',
-            'item_type': 'found'
-        }),
-
-        'lost': mongo.db.items.count_documents({
-            'status': 'approved',
-            'item_type': 'lost'
-        }),
-
-        'claimed': mongo.db.items.count_documents({
-            'status': 'approved',
-            'claimed': True
-        }),
-
-        'unclaimed': mongo.db.items.count_documents({
-            'status': 'approved',
-            'claimed': False
-        }),
+        'total': total_count,
+        'found': found_count,
+        'lost': lost_count,
+        'claimed': claimed_count,
+        'unclaimed': unclaimed_count
     }
 
-    recent = list(
-        mongo.db.items.find({'status': 'approved'})
-        .sort('created_at', -1)
-        .limit(4)
-    )
-
-    return render_template(
-        'index.html',
-        stats=stats,
-        recent=recent
-    )
+    recent = list(mongo.db.items.find({'status': 'approved'}).sort('created_at', -1).limit(4))
+    
+    return render_template('index.html', stats=stats, recent=recent)
 
 @app.route('/gallery')
 def gallery():
