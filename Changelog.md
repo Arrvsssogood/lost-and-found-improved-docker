@@ -30,7 +30,8 @@
 ### Added
 - **[Palacios]** Deployed containerized application to Azure Cloud via Docker Compose.
 - **[Palacios]** Configured CI/CD pipeline using GitHub Actions for automated deployment.
-- **[Palacios]** Finalized **COST_ESTIMATION.md** documentation, itemizing a **$16.91** monthly budget for East Asia (Hong Kong) deployment.
+- **[Palacios]** Finalized [cost-estimate.md](/report/cost-estimate.md) documentation, itemizing a **$16.91** monthly budget for East Asia (Hong Kong) deployment.
+- **[Palacios]** Added Architecture Diagram and its README ([Diagram](/diagram/diagram.md))
 
 ### Fixed
 - **[Palacios]** **Infrastructure Recovery:** Manually recovered VM from a "Deallocated/Frozen" state using Azure Cloud Shell (`az vm start`) after a 1GB RAM exhaustion event.
@@ -42,6 +43,6 @@
 
 ---
 
-### **Lead Programmer Note for the Judges:**
+### **Note:**
 > "Our production deployment successfully managed a hardware-level resource constraint tonight. When the 1GB RAM threshold was reached during deployment, causing the Azure Agent to hang, we utilized the Azure CLI to force-start the instance and clear the memory buffer. We further optimized the workflow by shifting image builds to GitHub Actions, ensuring the app remains stable on our containerized B1s environment."
 """
