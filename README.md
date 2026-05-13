@@ -59,7 +59,7 @@ For the complete analysis and optimization strategies, view the [Full Cost Estim
 
 ### Deliverable 4: Live Demo
 * **Live Application URL:** `http://20.239.17.38:5000`
-* **Youtube Video Link:** `Place Holder`
+* **Youtube Video Link:** `https://youtu.be/E21j7MYY2IM?si=mq342keJBFhsNnaI`
 
 ---
 
