@@ -1,13 +1,15 @@
 {% extends "base.html" %}
-{% block title %}Login — Finders Keepers{% endblock %}
+{% block title %}Login — FindBack{% endblock %}
 {% block content %}
 
 <div class="auth-page">
     <div class="auth-card">
-        <div class="auth-header">
-            <span class="auth-icon">⌖</span>
+        <div class="login-header">
+            <a href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="FindBack Logo" class="login-logo">
+            </a>
             <h2>Welcome Back</h2>
-            <p>Log in to your Finders Keepers account</p>
+            <p>Log in to your FindBack account</p>
         </div>
         <form method="POST" action="{{ url_for('login') }}">
             <div class="form-group">
