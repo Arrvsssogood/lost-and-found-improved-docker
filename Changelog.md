@@ -13,6 +13,7 @@
 - **[Palacios]** Fixed the stats for the claimed and unclaimed items.
 - **[Morandarte]** Implemented Azure logging in `app.py` and added logging for home page access.
 - **[Palacios]** Update datetime handling and enhance admin account creation in `app.py`.
+
 ---
 
 ## [2026-05-12] - Application Refactoring & Cloud Setup
@@ -29,12 +30,18 @@
 ### Added
 - **[Palacios]** Deployed containerized application to Azure Cloud via Docker Compose.
 - **[Palacios]** Configured CI/CD pipeline using GitHub Actions for automated deployment.
+- **[Palacios]** Finalized **COST_ESTIMATION.md** documentation, itemizing a **$16.91** monthly budget for East Asia (Hong Kong) deployment.
 
 ### Fixed
 - **[Palacios]** **Infrastructure Recovery:** Manually recovered VM from a "Deallocated/Frozen" state using Azure Cloud Shell (`az vm start`) after a 1GB RAM exhaustion event.
 - **[Palacios]** **Operational Continuity:** Resolved "Agent Not Ready" status by forcing a hardware power cycle through the CLI, ensuring service uptime for the final demo.
+- **[Palacios]** **Build Optimization:** Implemented high-availability strategy using pre-built Docker images to bypass resource-heavy local compilation on the server.
+
+### Changed
+- **[Palacios]** **Deployment Workflow:** Migrated from manual local builds to a remote CI/CD workflow using GitHub Container Registry to minimize server-side resource strain.
 
 ---
 
 ### **Lead Programmer Note for the Judges:**
-> "Our production deployment successfully managed a hardware-level resource constraint tonight. When the 1GB RAM threshold was reached during deployment, causing the Azure Agent to hang, we utilized the Azure CLI to force-start the instance and clear the memory buffer. The app is now running stable on a containerized environment."
+> "Our production deployment successfully managed a hardware-level resource constraint tonight. When the 1GB RAM threshold was reached during deployment, causing the Azure Agent to hang, we utilized the Azure CLI to force-start the instance and clear the memory buffer. We further optimized the workflow by shifting image builds to GitHub Actions, ensuring the app remains stable on our containerized B1s environment."
+"""
