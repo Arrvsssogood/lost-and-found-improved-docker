@@ -116,8 +116,8 @@ finders-keepers/
 ## Project Team
 | Member Name | Role |
 | :--- | :--- |
-| **Palacios** | Lead Programmer & Technical Architect |
-| **Morandarte** | UI/UX Developer | 
+| **Palacios, Harvey Lloyd** | Lead Programmer & Technical Architect |
+| **Morandarte, John Careal** | UI/UX Developer | 
 
 ---
 
